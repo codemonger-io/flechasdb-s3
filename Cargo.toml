@@ -1,0 +1,22 @@
+[package]
+name = "flechasdb-s3"
+version = "0.1.0"
+edition = "2021"
+description = "Amazon S3 extension for the Flechasdb system"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = "0.1"
+aws-config = "0.56"
+aws-sdk-s3 = "0.31"
+aws-smithy-runtime-api = "0.56"
+base64 = "0.21"
+bytes = "1.5"
+flechasdb = { path = "../flechasdb" }
+pin-project-lite = "0.2"
+ring = "0.16"
+tempfile = "3.8"
+tokio = { version = "1.32", features = ["rt"] }
+tokio-stream = { version = "0.1", features = ["time"] }
+tokio-util = { version = "0.7", features = ["io"] }
