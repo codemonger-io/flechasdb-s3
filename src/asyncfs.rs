@@ -1,4 +1,4 @@
-//! Asynchronous implementation of `flechasdb::io::FileSystem` on Amazon S3.
+//! Asynchronous implementation of [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
 
 use async_trait::async_trait;
 use aws_config::SdkConfig;
@@ -20,7 +20,7 @@ use tokio_util::io::StreamReader;
 use flechasdb::asyncdb::io::{FileSystem, HashedFileIn};
 use flechasdb::error::Error;
 
-/// `FileSystem` on Amazon S3.
+/// Asynchronous [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
 pub struct S3FileSystem {
     s3: Client,
     bucket_name: String,
@@ -28,7 +28,7 @@ pub struct S3FileSystem {
 }
 
 impl S3FileSystem {
-    /// Creates a new `FileSystem` on Amazon S3.
+    /// Creates a new [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
     pub fn new(
         aws_config: &SdkConfig,
         bucket_name: impl Into<String>,
@@ -64,6 +64,8 @@ type S3GetObjectResult =
 
 pin_project! {
     /// Readable file (object) in an S3 bucket.
+    ///
+    /// SHA-256 checksum must be enabled for the object.
     #[must_use = "streams do nothing unless you poll them"]
     pub struct S3HashedFileIn {
         digest: ring::digest::Context,

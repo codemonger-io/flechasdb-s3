@@ -1,4 +1,4 @@
-//! Synchronous implementation of `flechasdb::io::FileSystem` on Amazon S3.
+//! Synchronous implementation of [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
 
 use aws_config::SdkConfig;
 use aws_sdk_s3::Client;
@@ -15,7 +15,7 @@ use tempfile::NamedTempFile;
 use flechasdb::error::Error;
 use flechasdb::io::{FileSystem, HashedFileIn, HashedFileOut};
 
-/// `FileSystem` on Amazon S3.
+/// Synchronous [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
 pub struct S3FileSystem {
     runtime_handle: tokio::runtime::Handle,
     s3: aws_sdk_s3::Client,
@@ -24,9 +24,10 @@ pub struct S3FileSystem {
 }
 
 impl S3FileSystem {
-    /// Creates a new `FileSystem` on Amazon S3.
+    /// Creates a new [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
     ///
-    /// `runtime_handle` is necessary to wait for requests to Amazon S3.
+    /// `runtime_handle` is necessary to wait for Amazon S3 requests to
+    /// complete.
     pub fn new(
         runtime_handle: tokio::runtime::Handle,
         aws_config: &SdkConfig,
@@ -86,7 +87,7 @@ impl FileSystem for S3FileSystem {
 /// The object key will be the base path plus the URL-safe Base64 encoded
 /// SHA-256 hash.
 ///
-/// SHA-256 checksum will also be set.
+/// SHA-256 checksum will also be enabled for the object.
 pub struct S3HashedFileOut {
     runtime_handle: tokio::runtime::Handle,
     s3: Client,
@@ -159,6 +160,8 @@ impl HashedFileOut for S3HashedFileOut {
 }
 
 /// Readable file (object) in an S3 bucket.
+///
+/// SHA-256 checksum must be enabled for the object.
 pub struct S3HashedFileIn {
     body: bytes::Bytes,
     read_pos: usize,
