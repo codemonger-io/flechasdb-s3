@@ -2,7 +2,12 @@
 name = "flechasdb-s3"
 version = "0.1.0"
 edition = "2021"
-description = "Amazon S3 extension for the Flechasdb system"
+description = "Amazon S3 extension for the FlechasDB system"
+authors = ["Kikuo Emoto <kemoto@codemonger.io>"]
+license = "MIT"
+repository = "https://github.com/codemonger-io/flechasdb-s3"
+homepage = "https://github.com/codemonger-io/flechasdb-s3"
+categories = ["aws", "s3", "flechasdb"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
