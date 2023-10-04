@@ -232,9 +232,6 @@
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
 <a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! Synchronous implementation of [`FileSystem`](https://codemonger-io.github.io/flechasdb/api/flechasdb/io/trait.FileSystem.html) on Amazon S3.
 
 </span><span class="kw">use </span>aws_config::SdkConfig;
@@ -246,6 +243,7 @@
     STANDARD <span class="kw">as </span>base64_engine,
     URL_SAFE_NO_PAD <span class="kw">as </span>url_safe_base64_engine,
 };
+<span class="kw">use </span>bytes::buf::{Buf <span class="kw">as _</span>};
 <span class="kw">use </span>std::io::{Read, Write};
 <span class="kw">use </span>tempfile::NamedTempFile;
 
@@ -400,8 +398,7 @@
 ///
 /// SHA-256 checksum must be enabled for the object.
 </span><span class="kw">pub struct </span>S3HashedFileIn {
-    body: bytes::Bytes,
-    read_pos: usize,
+    body: bytes::buf::Reader&lt;bytes::Bytes&gt;,
     checksum: String,
     digest: ring::digest::Context,
 }
@@ -439,8 +436,7 @@
             ))<span class="question-mark">?
             </span>.into_bytes();
         <span class="prelude-val">Ok</span>(S3HashedFileIn {
-            body,
-            read_pos: <span class="number">0</span>,
+            body: body.reader(),
             checksum,
             digest: ring::digest::Context::new(<span class="kw-2">&amp;</span>ring::digest::SHA256),
         })
@@ -449,9 +445,7 @@
 
 <span class="kw">impl </span>Read <span class="kw">for </span>S3HashedFileIn {
     <span class="kw">fn </span>read(<span class="kw-2">&amp;mut </span><span class="self">self</span>, buf: <span class="kw-2">&amp;mut </span>[u8]) -&gt; std::io::Result&lt;usize&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>stream = <span class="kw-2">&amp;</span><span class="self">self</span>.body[<span class="self">self</span>.read_pos..];
-        <span class="kw">let </span>n = stream.read(buf)<span class="question-mark">?</span>;
-        <span class="self">self</span>.read_pos += n;
+        <span class="kw">let </span>n = <span class="self">self</span>.body.read(buf)<span class="question-mark">?</span>;
         <span class="self">self</span>.digest.update(<span class="kw-2">&amp;</span>buf[..n]);
         <span class="prelude-val">Ok</span>(n)
     }
