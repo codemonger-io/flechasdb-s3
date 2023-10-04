@@ -9,6 +9,7 @@ use base64::engine::general_purpose::{
     STANDARD as base64_engine,
     URL_SAFE_NO_PAD as url_safe_base64_engine,
 };
+use bytes::buf::{Buf as _};
 use std::io::{Read, Write};
 use tempfile::NamedTempFile;
 
@@ -163,8 +164,7 @@ impl HashedFileOut for S3HashedFileOut {
 ///
 /// SHA-256 checksum must be enabled for the object.
 pub struct S3HashedFileIn {
-    body: bytes::Bytes,
-    read_pos: usize,
+    body: bytes::buf::Reader<bytes::Bytes>,
     checksum: String,
     digest: ring::digest::Context,
 }
@@ -202,8 +202,7 @@ impl S3HashedFileIn {
             ))?
             .into_bytes();
         Ok(S3HashedFileIn {
-            body,
-            read_pos: 0,
+            body: body.reader(),
             checksum,
             digest: ring::digest::Context::new(&ring::digest::SHA256),
         })
@@ -212,9 +211,7 @@ impl S3HashedFileIn {
 
 impl Read for S3HashedFileIn {
     fn read(&mut self, buf: &mut [u8]) -> std::io::Result<usize> {
-        let mut stream = &self.body[self.read_pos..];
-        let n = stream.read(buf)?;
-        self.read_pos += n;
+        let n = self.body.read(buf)?;
         self.digest.update(&buf[..n]);
         Ok(n)
     }
