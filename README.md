@@ -8,7 +8,9 @@ This library is intended to be combined with [`flechasdb`](https://github.com/co
 
 There is no crate published yet.
 Please add the following line to your `Cargo.toml` file:
+
 ```toml
+[dependencies]
 flechasdb-s3 = { git = "https://github.com/codemonger-io/flechasdb-s3" }
 ```
 
