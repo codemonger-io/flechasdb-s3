@@ -18,7 +18,7 @@ aws-sdk-s3 = "0.31"
 aws-smithy-runtime-api = "0.56"
 base64 = "0.21"
 bytes = "1.5"
-flechasdb = { path = "../flechasdb" }
+flechasdb = { git = "https://github.com/codemonger-io/flechasdb.git", tag = "v0.1.0" }
 pin-project-lite = "0.2"
 ring = "0.16"
 tempfile = "3.8"

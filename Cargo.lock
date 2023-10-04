@@ -652,6 +652,7 @@ dependencies = [
 [[package]]
 name = "flechasdb"
 version = "0.1.0"
+source = "git+https://github.com/codemonger-io/flechasdb.git?tag=v0.1.0#c0ee2e90194d95a72822583f605791c5d718d1ef"
 dependencies = [
  "anyhow",
  "async-trait",
