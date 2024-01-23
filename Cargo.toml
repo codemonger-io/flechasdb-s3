@@ -1,6 +1,6 @@
 [package]
 name = "flechasdb-s3"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Amazon S3 extension for the FlechasDB system"
 authors = ["Kikuo Emoto <kemoto@codemonger.io>"]
@@ -13,9 +13,9 @@ categories = ["aws", "s3", "flechasdb"]
 
 [dependencies]
 async-trait = "0.1"
-aws-config = "0.56"
-aws-sdk-s3 = "0.31"
-aws-smithy-runtime-api = "0.56"
+aws-config = "1.1"
+aws-sdk-s3 = "1.13"
+aws-smithy-runtime-api = "1.1"
 base64 = "0.21"
 bytes = "1.5"
 flechasdb = { git = "https://github.com/codemonger-io/flechasdb.git", tag = "v0.1.0" }
