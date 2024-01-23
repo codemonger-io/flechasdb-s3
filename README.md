@@ -11,8 +11,10 @@ Please add the following line to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-flechasdb-s3 = { git = "https://github.com/codemonger-io/flechasdb-s3" }
+flechasdb-s3 = { git = "https://github.com/codemonger-io/flechasdb-s3", tag = "v0.2.0" }
 ```
+
+`flechasdb-s3` now depends on [AWS SDK for Rust](https://awslabs.github.io/aws-sdk-rust/) v1.x.
 
 ## API documentation
 
