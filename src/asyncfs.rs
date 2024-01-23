@@ -5,7 +5,6 @@ use aws_config::SdkConfig;
 use aws_sdk_s3::Client;
 use aws_sdk_s3::error::SdkError;
 use aws_sdk_s3::operation::get_object::{GetObjectError, GetObjectOutput};
-use aws_sdk_s3::primitives::ByteStream;
 use aws_sdk_s3::types::ChecksumMode;
 use aws_smithy_runtime_api::client::orchestrator::HttpResponse;
 use base64::Engine;
@@ -15,7 +14,6 @@ use core::pin::Pin;
 use core::task::Poll;
 use pin_project_lite::pin_project;
 use tokio::io::{AsyncRead, ReadBuf};
-use tokio_util::io::StreamReader;
 
 use flechasdb::asyncdb::io::{FileSystem, HashedFileIn};
 use flechasdb::error::Error;
@@ -72,7 +70,8 @@ pin_project! {
         #[pin]
         get_object: Pin<Box<dyn Future<Output = S3GetObjectResult> + Send>>,
         checksum: Option<String>,
-        body: Option<StreamReader<ByteStream, bytes::Bytes>>,
+        #[pin]
+        body: Option<Pin<Box<dyn AsyncRead + Send>>>,
     }
 }
 
@@ -121,10 +120,10 @@ impl AsyncRead for S3HashedFileIn {
     ) -> Poll<std::io::Result<()>> {
         let mut this = self.project();
         loop {
-            if let Some(body) = this.body.as_mut() {
+            if let Some(body) = this.body.as_mut().as_pin_mut() {
                 // 2. reads the contents
                 let last_pos = buf.filled().len();
-                return match Pin::new(body).poll_read(cx, buf) {
+                return match body.poll_read(cx, buf) {
                     Poll::Ready(Ok(_)) => {
                         if buf.filled().len() > last_pos {
                             let buf = &buf.filled()[last_pos..];
@@ -141,7 +140,7 @@ impl AsyncRead for S3HashedFileIn {
                     Poll::Ready(Ok(res)) => {
                         if res.checksum_sha256.is_some() {
                             *this.checksum = res.checksum_sha256;
-                            *this.body = Some(StreamReader::new(res.body));
+                            *this.body = Some(Box::pin(res.body.into_async_read()));
                         } else {
                             return Poll::Ready(Err(
                                 std::io::Error::new(
